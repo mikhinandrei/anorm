@@ -1,4 +1,4 @@
-# asql
+# ANORM - ANother ORM
 ## What do I want
 * Automatic session control (not like in sqlalchemy where required get and close sessions)
 * Code-first migrations
