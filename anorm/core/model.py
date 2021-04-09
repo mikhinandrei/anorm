@@ -5,6 +5,7 @@ import asyncio
 import asyncpg
 
 from anorm.core import columns
+from typing import Dict, List
 
 
 class ModelMeta(type):
@@ -25,8 +26,10 @@ class ModelMeta(type):
 
 
 class BaseModel(metaclass=ModelMeta):
+    _columns: Dict[str, columns.BaseColumn]
+
     def __init__(self, *args, **kwargs):
-        for name, value in kwargs.items():
-            if name in self._columns:
-                casted_value = self._columns[name].cast_python_value(value)
-                setattr(self, name, casted_value)
+        for column_name, model_column in self._columns.items():
+            input_value = kwargs.get(column_name, model_column.default_value)
+            casted_value = model_column.cast_python_value(input_value)
+            setattr(self, column_name, casted_value)

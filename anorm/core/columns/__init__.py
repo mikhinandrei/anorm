@@ -1,15 +1,23 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class BaseColumn(ABC):
     def __init__(self,
         primary_key: bool=False,
         db_index: bool=False,
+        default_value: Any = None,
+        nullable: bool = True,
     ):
+        if not (nullable and default_value is None):
+            raise Exception
+        if primary_key:
+            db_index = True
+
         self.primary_key = primary_key
         self.db_index = db_index
-        if primary_key:
-            self.db_index = True
+        self.nullable = nullable
+        self.default_value = default_value
     
     @abstractmethod
     def cast_python_value(self, value):
@@ -52,3 +60,17 @@ class Varchar(BaseColumn):
 
     def to_python(self, value):
         return str(value)
+
+
+class Integer(BaseColumn):
+    def sql_type(self):
+        "INTEGER"
+    
+    def cast_python_value(self, value):
+        return int(value)
+
+    def to_db(self):
+        pass
+
+    def to_python(self, value):
+        return int(value)
