@@ -49,8 +49,8 @@ class BaseColumn(ABC):
 
 
 class Varchar(BaseColumn):
-    def sql_type(self):
-        "VARCHAR"
+    def sql_type(self) -> str:
+        return "VARCHAR"
     
     def cast_python_value(self, value):
         return str(value)
@@ -63,14 +63,48 @@ class Varchar(BaseColumn):
 
 
 class Integer(BaseColumn):
-    def sql_type(self):
-        "INTEGER"
+    def sql_type(self) -> str:
+        return "INTEGER"
     
-    def cast_python_value(self, value):
+    def cast_python_value(self, value) -> int:
         return int(value)
 
     def to_db(self):
         pass
 
-    def to_python(self, value):
+    def to_python(self, value) -> int:
+        return int(value)
+
+
+class Boolean(BaseColumn):
+    def sql_type(self) -> str:
+        return "BOOLEAN"
+    
+    def cast_python_value(self, value) -> bool:
+        return bool(value)
+
+    def to_db(self):
+        pass
+
+    def to_python(self, value) -> bool:
+        return bool(value)
+
+
+class Serial(BaseColumn):
+    def __init__(self, *args, **kwargs):
+        kwargs['primary_key'] = True
+        kwargs['db_index'] = True
+
+        super().__init__(*args, **kwargs)
+
+    def sql_type(self) -> str:
+        return "SERIAL"
+    
+    def cast_python_value(self, value) -> int:
+        return int(value)
+
+    def to_db(self):
+        pass
+
+    def to_python(self, value) -> int:
         return int(value)
