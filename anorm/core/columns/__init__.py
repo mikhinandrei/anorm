@@ -50,6 +50,10 @@ class BaseColumn(ABC):
 
 
 class Varchar(BaseColumn):
+    def __init__(self, max_length: int, *args, **kwargs):  # This breaks other params intellisense
+        self.max_length = max_length
+        super().__init__(*args, **kwargs)
+
     def sql_type(self) -> str:
         return "VARCHAR"
     

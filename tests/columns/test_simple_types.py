@@ -19,7 +19,10 @@ def test_integer_column():
 
 
 def test_varchar_column():
-    col = columns.Varchar()
+    with pytest.raises(TypeError): #  Maybe provide custom exception?
+        col = columns.Varchar()
+    
+    col = columns.Varchar(max_length=6)
 
     assert col.sql_type() == "VARCHAR"
 

@@ -30,7 +30,7 @@ from anorm.core import columns
 )
 def test_create_simple_types_success(input, expected):
     class Album(BaseModel):
-        title = columns.Varchar()
+        title = columns.Varchar(32)
         year = columns.Integer()
 
     album = Album(**input)
