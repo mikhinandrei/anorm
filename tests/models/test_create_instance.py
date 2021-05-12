@@ -8,25 +8,25 @@ from anorm.core import columns
     [
         (
             {
-                'title': 'Master of Puppets',
-                'year': 1986,
+                "title": "Master of Puppets",
+                "year": 1986,
             },
             {
-                'title': 'Master of Puppets',
-                'year': 1986,
+                "title": "Master of Puppets",
+                "year": 1986,
             },
         ),
         (
             {
-                'title': 'Master of Puppets',
-                'year': '1986',
+                "title": "Master of Puppets",
+                "year": "1986",
             },
             {
-                'title': 'Master of Puppets',
-                'year': 1986,
+                "title": "Master of Puppets",
+                "year": 1986,
             },
         ),
-    ]
+    ],
 )
 def test_create_simple_types_success(input, expected):
     class Album(BaseModel):

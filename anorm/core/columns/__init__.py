@@ -4,9 +4,10 @@ from typing import Any
 
 
 class BaseColumn(ABC):
-    def __init__(self,
-        primary_key: bool=False,
-        db_index: bool=False,
+    def __init__(
+        self,
+        primary_key: bool = False,
+        db_index: bool = False,
         default_value: Any = None,
         nullable: bool = True,
     ):
@@ -19,7 +20,7 @@ class BaseColumn(ABC):
         self.db_index = db_index
         self.nullable = nullable
         self.default_value = default_value
-    
+
     @abstractmethod
     def cast_python_value(self, value):
         """
@@ -33,7 +34,7 @@ class BaseColumn(ABC):
         SQL type for CREATE TABLE
         """
         pass
-    
+
     @abstractmethod
     def to_db(self):
         """
@@ -50,13 +51,15 @@ class BaseColumn(ABC):
 
 
 class Varchar(BaseColumn):
-    def __init__(self, max_length: int, *args, **kwargs):  # This breaks other params intellisense
+    def __init__(
+        self, max_length: int, *args, **kwargs
+    ):  # This breaks other params intellisense
         self.max_length = max_length
         super().__init__(*args, **kwargs)
 
     def sql_type(self) -> str:
         return "VARCHAR"
-    
+
     def cast_python_value(self, value) -> str:
         return str(value)
 
@@ -70,14 +73,12 @@ class Varchar(BaseColumn):
 class Integer(BaseColumn):
     def sql_type(self) -> str:
         return "INTEGER"
-    
+
     def cast_python_value(self, value) -> int:
         try:
             return int(value)
         except ValueError:
-            raise DataTypeException(
-                f'Value {value} is not integer'
-            )
+            raise DataTypeException(f"Value {value} is not integer")
 
     def to_db(self):
         pass
@@ -89,21 +90,19 @@ class Integer(BaseColumn):
 class Boolean(BaseColumn):
     def sql_type(self) -> str:
         return "BOOLEAN"
-    
+
     def cast_python_value(self, value) -> bool:
         if isinstance(value, bool):
             return value
         if isinstance(value, int):
             return bool(value)
         if isinstance(value, str):
-            if value.lower() == 'true':
+            if value.lower() == "true":
                 return True
-            if value.lower() == 'false':
+            if value.lower() == "false":
                 return False
-        
-        raise DataTypeException(
-            f'Value {value} cannot be presented like boolean'
-        )
+
+        raise DataTypeException(f"Value {value} cannot be presented like boolean")
 
     def to_db(self):
         pass
@@ -114,14 +113,14 @@ class Boolean(BaseColumn):
 
 class Serial(Integer):
     def __init__(self, *args, **kwargs):
-        kwargs['primary_key'] = True
-        kwargs['db_index'] = True
+        kwargs["primary_key"] = True
+        kwargs["db_index"] = True
 
         super().__init__(*args, **kwargs)
 
     def sql_type(self) -> str:
         return "SERIAL"
-    
+
     def cast_python_value(self, value) -> int:
         if isinstance(value, int):
             return value
@@ -130,5 +129,5 @@ class Serial(Integer):
             return int(value)
 
         raise DataTypeException(
-            f'Only integer value can be used as serial ({value} is not integer)'
+            f"Only integer value can be used as serial ({value} is not integer)"
         )

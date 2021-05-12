@@ -13,14 +13,14 @@ class ModelMeta(type):
         magic_attributes = {}
         _columns = {}
         for name, value in dct.items():
-            if name.startswith('__'):
+            if name.startswith("__"):
                 magic_attributes[name] = value
             if isinstance(value, columns.BaseColumn):
                 _columns[name] = value
 
         cls_attrs = {
             **magic_attributes,
-            '_columns': _columns,
+            "_columns": _columns,
         }
         return super().__new__(metacls, cls, bases, cls_attrs)
 
