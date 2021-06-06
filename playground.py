@@ -21,5 +21,11 @@ async def async_main():
 
     print("Last record:", last_record.title, last_record.year, last_record.is_explicit)
 
+    filtered_albums = Album.repository.filter(year="1984")
+    for album in await filtered_albums.all():
+        print(album.id, album.title, album.year, album.is_explicit)
+
+    print(await filtered_albums.count())
+
 
 asyncio.run(async_main())

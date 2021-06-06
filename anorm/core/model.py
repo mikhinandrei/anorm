@@ -4,6 +4,7 @@ Basic Model realization
 import asyncio
 import asyncpg
 from anorm.core.session import SessionStorage
+from anorm.core.conditions import QueryConditions
 
 from anorm.core import columns
 from typing import Dict, List
@@ -21,7 +22,7 @@ class LazyQuery:
 
         return self._output_model(**data_dict)
 
-    async def all(self) -> List[asyncpg.Record]:
+    async def all(self):
         """
         Get all entries matching query
         :usage:
@@ -33,14 +34,14 @@ class LazyQuery:
             records: List[asyncpg.Record] = await cursor.fetch(
                 """
                     SELECT * FROM {table_name}
+                    {where_conditions}
                 """.format(
                     table_name=self._output_model.__tablename__,
+                    where_conditions=QueryConditions(self.conditions).to_sql_where(),
                 )
             )
 
-            result = []
-            for record in records:
-                result.append(self._convert_to_output_model(record))
+            result = [self._convert_to_output_model(record) for record in records]
 
             return result
 
@@ -49,8 +50,10 @@ class LazyQuery:
             result = await cursor.fetch(
                 """
                     SELECT COUNT(*) FROM {table_name}
+                    {where_conditions}
                 """.format(
-                    table_name=self._output_model.__tablename__
+                    table_name=self._output_model.__tablename__,
+                    where_conditions=QueryConditions(self.conditions).to_sql_where(),
                 )
             )
             return int(result[0]["count"])
@@ -98,6 +101,12 @@ class LazyQuery:
     async def update(self):
         pass
 
+    async def create(self):
+        pass
+
+    async def delete(self):
+        pass
+
 
 class Repository:
     """
@@ -141,17 +150,20 @@ class ModelMeta(type):
 
         magic_attributes = {}
         _columns = {}
+        other_attributes = {}
 
         for name, value in dct.items():
             if name.startswith("__"):
                 magic_attributes[name] = value
-            if isinstance(value, columns.BaseColumn):
+            elif isinstance(value, columns.BaseColumn):
                 _columns[name] = value
                 if isinstance(value, columns.Serial):
                     if _id_column:
                         raise Exception("Only one serial column allowed!")
 
                     _id_column = name
+            else:
+                other_attributes[name] = value
 
         if not _id_column:
             _id_column = "id"
@@ -161,6 +173,7 @@ class ModelMeta(type):
 
         cls_attrs = {
             **magic_attributes,
+            **other_attributes,
             "_columns": _columns,
             "repository": repository_class(cls.__class__),
             "__tablename__": tablename,
@@ -191,7 +204,7 @@ class BaseModel(metaclass=ModelMeta):
         return result
 
     def update(self, **data):
-        pass
+        print("lol")
 
     def delete(self):
         pass
