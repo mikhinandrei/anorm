@@ -5,9 +5,10 @@ from typing import Optional
 class SessionStorage:
     _pool: Optional[asyncpg.Pool] = None
 
-    async def connect(self, dsn: str):
-        if not self._pool:
-            self._pool = await asyncpg.create_pool(dsn)
+    @classmethod
+    async def connect(cls, dsn: str):
+        if not cls._pool:
+            cls._pool = await asyncpg.create_pool(dsn)
 
     @classmethod
     def get_pool(cls) -> asyncpg.Pool:

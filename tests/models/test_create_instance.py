@@ -12,6 +12,7 @@ from anorm.core import columns
                 "year": 1986,
             },
             {
+                "id": None,
                 "title": "Master of Puppets",
                 "year": 1986,
             },
@@ -22,6 +23,7 @@ from anorm.core import columns
                 "year": "1986",
             },
             {
+                "id": None,
                 "title": "Master of Puppets",
                 "year": 1986,
             },
@@ -34,4 +36,4 @@ def test_create_simple_types_success(input, expected):
         year = columns.Integer()
 
     album = Album(**input)
-    assert album.__dict__ == expected
+    assert album.to_json() == expected

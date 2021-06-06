@@ -122,6 +122,9 @@ class Serial(Integer):
         return "SERIAL"
 
     def cast_python_value(self, value) -> int:
+        if value is None:
+            return None
+
         if isinstance(value, int):
             return value
 
